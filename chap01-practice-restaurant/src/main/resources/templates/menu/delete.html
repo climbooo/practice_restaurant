@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div th:replace="common/header.html"></div>
+	<h3 align="center">삭제 할 메뉴 이름 : <!-- <span th:text="${menuList.menu.menuName}"></span> --></h3>
+	<h3 align="center">판매 상태 : <!-- <span th:text="${menuList.menu.orderableStatus}"></span> --></h3>
+	<form th:action="@{/menu/delete}" method="post" align="center">
+		<label for="menu">삭제 할 메뉴를 선택하세요</label>
+		<select name="menuCode" id="menu">
+			<option th:each="menu : ${menuList}"
+					th:value="${menu.menuCode}"
+					th:text="${menu.menuName}">
+			</option>
+		</select>
+		<button type="submit">삭제</button>
+	</form>
+</body>
+</html>

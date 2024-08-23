@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+	<div th:replace="common/header.html"></div>
+	<h2 align="center">메뉴 수정</h2>
+	
+	<h3 align="center">수정 할 메뉴 이름: <span th:text="${menu.menuName}"></span></h3>
+	
+	<form action="/menu/modify" method="post" align="center">
+		<!-- <label>메뉴 번호 : </label><span th:text="${menu.menuCode}"></span> -->
+		<input type="hidden" name="menuCode" th:value="${menu.menuCode}">
+		<label>메뉴 이름 : </label><input type="text" name="menuName" th:value="${menu.menuName}"><br>
+		<label>메뉴 가격 : </label><input type="number" name="menuPrice" th:value="${menu.menuPrice}"><br>
+		<label>카테고리 : </label>
+		<select name="categoryCode" id="categoryCode"></select>
+		<label>판매 상태 : </label>
+		<select name="orderableStatus">
+			<option value="Y">Y</option>
+			<option value="N">N</option>
+		</select>
+		<input type="submit" value="수정">
+	</form>
+	<script>
+		function selectCategory(){
+			  $.ajax({
+				  url: "/menu/category",
+				  success: function(data){
+					  const $categoryCode = document.querySelector("#categoryCode");
+					  
+					  for(let index in data){
+						  $option = document.createElement("option")
+						  $option.value = data[index].categoryCode;
+						  $option.textContent = data[index].categoryName;
+						  
+						  $categoryCode.appendChild($option);
+						  /* $categoryCode.appendChild($("<option>").val(data[index].categoryCode).text(data[index].categoryName)); */
+					  }
+				  }, 
+				  error: function(error){
+					 console.log(error);				  
+				  }
+			  });
+		};
+		selectCategory();
+	</script>
+</body>
+</html>

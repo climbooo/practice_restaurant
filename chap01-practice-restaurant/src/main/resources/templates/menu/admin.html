@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script>
+	function confirmDelete() {
+		return confirm("삭제하면 복구할 수 없습니다. 정말 삭제 하시겠습니까?");
+	}
+</script>
+</head>
+<body>
+	<div th:replace="common/header.html"></div>
+	
+	<h2 align="center" style="color:blue">Menu List</h2>
+	
+	<table align="center" border="1">
+		<thead><br>
+			<tr>
+				<th>메뉴번호</th>
+				<th>카테고리이름</th>
+				<th>메뉴이름</th>
+				<th>메뉴가격</th>
+				<th>판매상태</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr align="center" th:each="menu : ${ menuList }">
+				<td th:text="${ menu.menuCode }"></td>
+				<td th:text="${ menu.categoryCode.categoryName }"></td>
+				<td th:text="${ menu.menuName }"></td>
+				<td th:text="${ menu.menuPrice }"></td>
+				<td th:text="${ menu.orderableStatus }"></td>
+				<td>
+					<a th:href="@{/menu/modify/{menuCode}(menuCode=${menu.menuCode})}">
+						<button type="button">수정</button>
+					</a>
+					<form th:action="@{/menu/delete/{menuCode}(menuCode=${menu.menuCode})}" method="post" onsubmit="return confirmDelete()">
+						<button type="submit">삭제</button>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<!-- <br>
+	<div align="center">
+		<button onclick="location.href='/menu/modify'">수정하기</button>
+		<button>삭제하기</button>
+	</div> -->
+</body>
+</html>
