@@ -46,9 +46,30 @@ public class MenuService {
 		return modelMapper.map(menu, MenuAndCategoryDTO.class);
 	}
 	
-	public List<MenuAndCategoryDTO> findMenuList()	{
+	public List<MenuAndCategoryDTO> findMenuList(SelectCriteria selectCriteria)	{
 		
-		List<MenuAndCategory> menuList = menuAndCategoryRepository.findAll(Sort.by("menuCode"));
+		int index = selectCriteria.getPageNo() - 1;			// Pageble객체를 사용시 페이지는 0부터 시작(1페이지가 0)
+		int count = selectCriteria.getLimit();
+		String searchValue = selectCriteria.getSearchValue();
+
+		/* 페이징 처리와 정렬을 위한 객체 생성 */
+		Pageable paging = PageRequest.of(index, count, Sort.by("menuCode"));	// Pageable은 org.springframework.data.domain패키지로 import
+
+		List<MenuAndCategory> menuList = new ArrayList<MenuAndCategory>();
+		if(searchValue != null) {
+
+			/* category 검색일 경우 */
+			if("menuName".equals(selectCriteria.getSearchCondition())) {
+				menuList = menuAndCategoryRepository.findByMenuNameContaining(selectCriteria.getSearchValue(), paging);
+			}
+
+			/* 가격 검색일 경우 */
+			if("menuPrice".equals(selectCriteria.getSearchCondition())) {
+				menuList = menuAndCategoryRepository.findByMenuPriceLessThanEqual(Integer.valueOf(selectCriteria.getSearchValue()), paging);
+			}
+		} else {
+			menuList = menuAndCategoryRepository.findAll(paging).toList();
+		}
 		
 		return menuList.stream().map(menu -> modelMapper.map(menu, MenuAndCategoryDTO.class)).collect(Collectors.toList());
 	}

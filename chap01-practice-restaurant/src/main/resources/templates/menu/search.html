@@ -6,7 +6,7 @@
 </head>
 <body>
 	<div th:replace="common/header.html"></div>
-	<h3 align="center">메뉴 검색</h3>
+	<h3 align="center" style="color:red">Menu List</h3>
 	<table align="center" border="1">
 		<tr>
 			<th>메뉴번호</th>
@@ -15,7 +15,7 @@
 			<th>메뉴가격</th>
 			<th>판매상태</th>
 		</tr>
-		<tr th:each="menu : ${ menuList }">
+		<tr align="center" th:each="menu : ${ menuList }">
 			<td th:text="${ menu.menuCode }"></td>
 			<td th:text="${ menu.categoryCode.categoryName }"></td>
 			<td th:text="${ menu.menuName }"></td>
@@ -23,9 +23,8 @@
 			<td th:text="${ menu.orderableStatus }"></td>
 		</tr>
 	</table>
-
+	<br>
     <div th:replace="menu/paging.html"></div>
-
 	<!-- 검색 폼 -->
 	<div class="search-area" align="center">
 		<form id="loginForm" action="/menu/search" method="get" style="display: inline-block">

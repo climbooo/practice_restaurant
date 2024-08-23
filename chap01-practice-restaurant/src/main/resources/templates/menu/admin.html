@@ -8,14 +8,25 @@
 		return confirm("삭제하면 복구할 수 없습니다. 정말 삭제 하시겠습니까?");
 	}
 </script>
+<style>
+	div.relative {
+		position: relative;
+		left: 1108px;
+		top: 5px;
+	}
+</style>
 </head>
 <body>
 	<div th:replace="common/header.html"></div>
 	
 	<h2 align="center" style="color:blue">Menu List</h2>
 	
+	<div class="relative">
+		<button onclick="location.href='/menu/regist'">메뉴등록</button>
+	</div>
+	
 	<table align="center" border="1">
-		<thead><br>
+		<br>
 			<tr>
 				<th>메뉴번호</th>
 				<th>카테고리이름</th>
@@ -23,8 +34,6 @@
 				<th>메뉴가격</th>
 				<th>판매상태</th>
 			</tr>
-		</thead>
-		<tbody>
 			<tr align="center" th:each="menu : ${ menuList }">
 				<td th:text="${ menu.menuCode }"></td>
 				<td th:text="${ menu.categoryCode.categoryName }"></td>
@@ -40,8 +49,25 @@
 					</form>
 				</td>
 			</tr>
-		</tbody>
 	</table>
+	
+	<br>
+	<div th:replace="menu/adminPaging.html"></div>
+	
+	<div class="search-area" align="center">
+		<form id="loginForm" action="/menu/admin" method="get" style="display: inline-block">
+				<select th:with="searchCondition = ${selectCriteria.searchCondition}"
+					id="searchCondition" name="searchCondition">
+					<option value="menuName" th:selected="${ searchCondition } == 'menuName'">메뉴이름</option>
+					<option value="menuPrice" th:selected="${ searchCondition } == 'menuPrice'">가격</option>
+				</select> 
+			<input type="hidden" name="currentPage" value="1">
+			<input type="search" id="name" name="searchValue" th:value="${selectCriteria.searchValue}">
+			<button class="btn btn-bs" type="submit">검색하기</button>
+		</form>
+	</div>
+	
+	
 	<!-- <br>
 	<div align="center">
 		<button onclick="location.href='/menu/modify'">수정하기</button>

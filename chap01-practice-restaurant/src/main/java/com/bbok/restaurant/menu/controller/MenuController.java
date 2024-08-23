@@ -51,24 +51,56 @@ public class MenuController {
 	}
 	
 	/* 메뉴 리스트 */
-	@GetMapping("/list")
-	public ModelAndView findMenuList(ModelAndView mv) {
-		
-		List<MenuAndCategoryDTO> menuList = menuService.findMenuList();
-		
-		mv.addObject("menuList", menuList);
-		mv.setViewName("/menu/list");
-		
-		return mv;
-	}
+//	@GetMapping("/list")
+//	public ModelAndView findMenuList(ModelAndView mv) {
+//		
+//		List<MenuAndCategoryDTO> menuList = menuService.findMenuList();
+//		
+//		mv.addObject("menuList", menuList);
+//		mv.setViewName("/menu/list");
+//		
+//		return mv;
+//	}
 	
 	/* 관리자용 메뉴 리스트 */
 	@GetMapping("/admin")
-	public ModelAndView findAdminMenuList(ModelAndView mv) {
+	public ModelAndView findAdminMenuList(HttpServletRequest request, ModelAndView mv) {
 		
-		List<MenuAndCategoryDTO> menuList = menuService.findMenuList();
+		String currentPage = request.getParameter("currentPage");
+		int pageNo = 1;
+
+		if(currentPage != null && !"".equals(currentPage)) {
+			pageNo = Integer.parseInt(currentPage);
+		}
+
+		String searchCondition = request.getParameter("searchCondition");
+		String searchValue = request.getParameter("searchValue");
+
+		int totalCount = menuService.selectTotalCount(searchCondition, searchValue);
+
+		/* 한 페이지에 보여 줄 게시물 수 */
+		int limit = 10;		//얘도 파라미터로 전달받아도 된다.
+
+		/* 한 번에 보여질 페이징 버튼의 갯수 */
+		int buttonAmount = 5;
+
+		/* 페이징 처리를 위한 로직 호출 후 페이징 처리에 관한 정보를 담고 있는 인스턴스를 반환받는다. */
+		SelectCriteria selectCriteria = null;
+		if(searchValue != null && !"".equals(searchValue)) {
+			selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount, searchCondition, searchValue);
+		} else {
+			selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+		}
+		System.out.println(selectCriteria);
+
+		List<MenuAndCategoryDTO> menuList = menuService.findMenuList(selectCriteria);
+		
+		for(MenuAndCategoryDTO menu : menuList) {
+			System.out.println(menu);
+		}
 		
 		mv.addObject("menuList", menuList);
+		mv.addObject("selectCriteria", selectCriteria);
 		mv.setViewName("/menu/admin");
 		
 		return mv;
@@ -107,7 +139,7 @@ public class MenuController {
 		menuService.registNewMenu(newMenu);
 		
 		rttr.addFlashAttribute("registSuccessMessage", "메뉴 등록 완료");
-		mv.setViewName("redirect:/menu/list");
+		mv.setViewName("redirect:/menu/admin");
 		
 		return mv;
 	}
@@ -156,7 +188,7 @@ public class MenuController {
 		rttr.addFlashAttribute("deleteSuccessMessage", "메뉴 삭제 성공");
 		
 		System.out.println("menuCode: " + menuCode);
-		return "redirect:/menu/list";
+		return "redirect:/menu/admin";
 	}
 	
 	@GetMapping("/search")
