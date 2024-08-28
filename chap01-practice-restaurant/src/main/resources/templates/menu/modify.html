@@ -11,8 +11,8 @@
 	
 	<h3 align="center">수정 할 메뉴 이름: <span th:text="${menu.menuName}"></span></h3>
 	
-	<form action="/menu/modify" method="post" align="center">
-		<!-- <label>메뉴 번호 : </label><span th:text="${menu.menuCode}"></span> -->
+	<form action="/menu/modify" method="post" align="center" enctype="multipart/form-data">
+		<label>메뉴 사진 : </label><input type="file" name="menuImg" th:value="${menu.pictureUrl}"><br>
 		<input type="hidden" name="menuCode" th:value="${menu.menuCode}">
 		<label>메뉴 이름 : </label><input type="text" name="menuName" th:value="${menu.menuName}"><br>
 		<label>메뉴 가격 : </label><input type="number" name="menuPrice" th:value="${menu.menuPrice}"><br>

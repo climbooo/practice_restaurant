@@ -89,13 +89,16 @@ public class MenuService {
 	}
 
 	@Transactional
-	public void modifyMenu(MenuDTO menu) {
+	public void modifyMenu(MenuDTO modifyMenu) {
 		
-		Menu foundMenu = menuRepository.findById(menu.getMenuCode()).get();
-		foundMenu.setMenuName(menu.getMenuName());
-		foundMenu.setMenuPrice(menu.getMenuPrice());
-		foundMenu.setOrderableStatus(menu.getOrderableStatus());
-		foundMenu.setCategoryCode(menu.getCategoryCode());
+		Menu foundMenu = menuRepository.findById(modifyMenu.getMenuCode()).get();
+		foundMenu.setMenuName(modifyMenu.getMenuName());
+		foundMenu.setMenuPrice(modifyMenu.getMenuPrice());
+		foundMenu.setOrderableStatus(modifyMenu.getOrderableStatus());
+		foundMenu.setCategoryCode(modifyMenu.getCategoryCode());
+		foundMenu.setOriginUrl(modifyMenu.getOriginUrl());
+		foundMenu.setPictureUrl(modifyMenu.getPictureUrl());
+		
 	}
 
 	public CategoryDTO findCategoryByCode(int categoryCode) {

@@ -188,6 +188,11 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
+		String newUrl = menu.getPictureUrl();
+		String pictureUrl = "/menuImages/" + newUrl;
+		
+		menu.setPictureUrl(pictureUrl);
+		
 		mv.addObject("menu", menu);
 		mv.setViewName("/menu/modify");
 		
@@ -196,13 +201,39 @@ public class MenuController {
 	
 	/* 메뉴 수정 요청 */
 	@PostMapping("/modify")
-	public String modifyMenu(RedirectAttributes rttr, @ModelAttribute MenuDTO menu) {
+	public String modifyMenu(@RequestParam MultipartFile menuImg, RedirectAttributes rttr, @ModelAttribute MenuDTO modifyMenu) {
 		
-		menuService.modifyMenu(menu);
+		/* 파일 저장 */
+		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
+		System.out.println("넘어온 menuImg: " + menuImg);
+		/* uploadFile 폴더 생성 */
+		File mkdir = new File(filePath);
+		if(!mkdir.exists()) {
+			mkdir.mkdirs();
+		}
+		
+		/* 파일명 변경 */
+		String originFileName = menuImg.getOriginalFilename();
+		String ext = originFileName.substring(originFileName.lastIndexOf("."));
+		String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+		
+		try {
+			menuImg.transferTo(new File(filePath + "/" + saveName));
+		} catch (IllegalStateException | IOException e){
+			e.printStackTrace();
+			
+			new File(filePath + "/" + saveName).delete();
+			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
+		}
+		
+		modifyMenu.setOriginUrl(originFileName);
+		modifyMenu.setPictureUrl(saveName);
+		
+		menuService.modifyMenu(modifyMenu);
 		
 		rttr.addFlashAttribute("modifySuccessMessage", "메뉴 수정 완료");
 		
-		return "redirect:/menu/" + menu.getMenuCode();
+		return "redirect:/menu/" + modifyMenu.getMenuCode();
 	}
 	
 //	@GetMapping("/delete")
