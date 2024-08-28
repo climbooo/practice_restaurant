@@ -38,16 +38,25 @@ public class Menu {
 	@Column(name= "ORDERABLE_STATUS")
 	private String orderableStatus;
 	
+	@Column(name = "ORIGIN_URL")
+	private String originUrl;
+	
+	@Column(name = "PICTURE_URL")
+	private String pictureUrl;
+	
 	public Menu() {
 	}
 
-	public Menu(int menuCode, int categoryCode, String menuName, int menuPrice, String orderableStatus) {
+	public Menu(int menuCode, int categoryCode, String menuName, int menuPrice, String orderableStatus,
+			String originUrl, String pictureUrl) {
 		super();
 		this.menuCode = menuCode;
 		this.categoryCode = categoryCode;
 		this.menuName = menuName;
 		this.menuPrice = menuPrice;
 		this.orderableStatus = orderableStatus;
+		this.originUrl = originUrl;
+		this.pictureUrl = pictureUrl;
 	}
 
 	public int getMenuCode() {
@@ -90,11 +99,28 @@ public class Menu {
 		this.orderableStatus = orderableStatus;
 	}
 
+	public String getOriginUrl() {
+		return originUrl;
+	}
+
+	public void setOriginUrl(String originUrl) {
+		this.originUrl = originUrl;
+	}
+
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
+	}
+
 	@Override
 	public String toString() {
 		return "Menu [menuCode=" + menuCode + ", categoryCode=" + categoryCode + ", menuName=" + menuName
-				+ ", menuPrice=" + menuPrice + ", orderableStatus=" + orderableStatus + "]";
+				+ ", menuPrice=" + menuPrice + ", orderableStatus=" + orderableStatus + ", originUrl=" + originUrl
+				+ ", pictureUrl=" + pictureUrl + "]";
 	}
-	
+
 	
 }

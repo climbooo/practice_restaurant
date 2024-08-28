@@ -3,24 +3,26 @@ package com.bbok.restaurant.menu.dto;
 public class MenuAndCategoryDTO {
 
 	private int menuCode;
-//	private int categoryCode;
+	private CategoryDTO categoryCode;
 	private String menuName;
 	private int menuPrice;
 	private String orderableStatus;
-	private CategoryDTO categoryCode;
+	private String originUrl;
+	private String pictureUrl;
 	
 	public MenuAndCategoryDTO() {
-		super();
 	}
 
-	public MenuAndCategoryDTO(int menuCode, String menuName, int menuPrice, String orderableStatus,
-			CategoryDTO categoryCode) {
+	public MenuAndCategoryDTO(int menuCode, CategoryDTO categoryCode, String menuName, int menuPrice,
+			String orderableStatus, String originUrl, String pictureUrl) {
 		super();
 		this.menuCode = menuCode;
+		this.categoryCode = categoryCode;
 		this.menuName = menuName;
 		this.menuPrice = menuPrice;
 		this.orderableStatus = orderableStatus;
-		this.categoryCode = categoryCode;
+		this.originUrl = originUrl;
+		this.pictureUrl = pictureUrl;
 	}
 
 	public int getMenuCode() {
@@ -29,6 +31,14 @@ public class MenuAndCategoryDTO {
 
 	public void setMenuCode(int menuCode) {
 		this.menuCode = menuCode;
+	}
+
+	public CategoryDTO getCategoryCode() {
+		return categoryCode;
+	}
+
+	public void setCategoryCode(CategoryDTO categoryCode) {
+		this.categoryCode = categoryCode;
 	}
 
 	public String getMenuName() {
@@ -55,20 +65,28 @@ public class MenuAndCategoryDTO {
 		this.orderableStatus = orderableStatus;
 	}
 
-	public CategoryDTO getCategoryCode() {
-		return categoryCode;
+	public String getOriginUrl() {
+		return originUrl;
 	}
 
-	public void setCategoryCode(CategoryDTO categoryCode) {
-		this.categoryCode = categoryCode;
+	public void setOriginUrl(String originUrl) {
+		this.originUrl = originUrl;
+	}
+
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
 	}
 
 	@Override
 	public String toString() {
-		return "MenuAndCategoryDTO [menuCode=" + menuCode + ", menuName=" + menuName + ", menuPrice=" + menuPrice
-				+ ", orderableStatus=" + orderableStatus + ", categoryCode=" + categoryCode + "]";
+		return "MenuAndCategoryDTO [menuCode=" + menuCode + ", categoryCode=" + categoryCode + ", menuName=" + menuName
+				+ ", menuPrice=" + menuPrice + ", orderableStatus=" + orderableStatus + ", originUrl=" + originUrl
+				+ ", pictureUrl=" + pictureUrl + "]";
 	}
-
 
 	
 }

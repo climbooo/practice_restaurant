@@ -1,6 +1,10 @@
 package com.bbok.restaurant.menu.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,10 +49,15 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
+		String newUrl = menu.getPictureUrl();
+		String pictureUrl = "/menuImages/" + newUrl;
+		
+		menu.setPictureUrl(pictureUrl);
+		
 		mv.addObject("menu", menu);
 		mv.setViewName("/menu/one");
 		
-		System.out.println("menu에 담긴 값:" + menu);
+		System.out.println("mv에 담긴 값:" + mv);
 		return mv;
 	}
 	
@@ -134,14 +145,41 @@ public class MenuController {
 	
 	/* 메뉴 등록 요청 */
 	@PostMapping("/regist")
-	public ModelAndView registMenu(ModelAndView mv, MenuDTO newMenu, RedirectAttributes rttr) {
+	public String registMenu(@RequestParam MultipartFile menuImg, @ModelAttribute MenuDTO newMenu, RedirectAttributes rttr)throws UnsupportedEncodingException {
+//		(value = "file", required = false)
+		/* 파일 저장 */
+		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
+		System.out.println("넘어온 menuImg: " + menuImg);
+		/* uploadFile 폴더 생성 */
+		File mkdir = new File(filePath);
+		if(!mkdir.exists()) {
+			mkdir.mkdirs();
+		}
 		
+		/* 파일명 변경 */
+		String originFileName = menuImg.getOriginalFilename();
+		String ext = originFileName.substring(originFileName.lastIndexOf("."));
+		String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+		
+		try {
+			menuImg.transferTo(new File(filePath + "/" + saveName));
+		} catch (IllegalStateException | IOException e){
+			e.printStackTrace();
+			
+			new File(filePath + "/" + saveName).delete();
+			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
+		}
+		
+		newMenu.setOriginUrl(originFileName);
+		newMenu.setPictureUrl(saveName);
+		
+		System.out.println("등록 할 newMenu" + newMenu);
 		menuService.registNewMenu(newMenu);
 		
 		rttr.addFlashAttribute("registSuccessMessage", "메뉴 등록 완료");
-		mv.setViewName("redirect:/menu/admin");
+//		mv.setViewName("redirect:/menu/admin");
 		
-		return mv;
+		return "redirect:/menu/admin";
 	}
 	
 	/* 메뉴 수정 페이지 */

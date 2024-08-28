@@ -29,8 +29,9 @@ public class MenuAndCategory {
 	@Column(name = "MENU_CODE")
 	private int menuCode;
 	
-//	@Column(name = "CATEGORY_CODE")
-//	private int categoryCode;
+	@ManyToOne
+	@JoinColumn(name = "CATEGORY_CODE")
+	private Category categoryCode;
 	
 	@Column(name = "MENU_NAME")
 	private String menuName;
@@ -41,69 +42,106 @@ public class MenuAndCategory {
 	@Column(name = "ORDERABLE_STATUS")
 	private String orderableStatus;
 	
-	@ManyToOne
-	@JoinColumn(name = "CATEGORY_CODE")
-	private Category categoryCode;
+	@Column(name = "ORIGIN_URL")
+	private String originUrl;
+	
+	@Column(name = "PICTURE_URL")
+	private String pictureUrl;
+	
 	
 	public MenuAndCategory() {
 	}
 
-	public MenuAndCategory(int menuCode, String menuName, int menuPrice, String orderableStatus,
-			Category categoryCode) {
+
+	public MenuAndCategory(int menuCode, Category categoryCode, String menuName, int menuPrice, String orderableStatus,
+			String originUrl, String pictureUrl) {
 		super();
 		this.menuCode = menuCode;
+		this.categoryCode = categoryCode;
 		this.menuName = menuName;
 		this.menuPrice = menuPrice;
 		this.orderableStatus = orderableStatus;
-		this.categoryCode = categoryCode;
+		this.originUrl = originUrl;
+		this.pictureUrl = pictureUrl;
 	}
+
 
 	public int getMenuCode() {
 		return menuCode;
 	}
 
+
 	public void setMenuCode(int menuCode) {
 		this.menuCode = menuCode;
 	}
 
-	public String getMenuName() {
-		return menuName;
-	}
-
-	public void setMenuName(String menuName) {
-		this.menuName = menuName;
-	}
-
-	public int getMenuPrice() {
-		return menuPrice;
-	}
-
-	public void setMenuPrice(int menuPrice) {
-		this.menuPrice = menuPrice;
-	}
-
-	public String getOrderableStatus() {
-		return orderableStatus;
-	}
-
-	public void setOrderableStatus(String orderableStatus) {
-		this.orderableStatus = orderableStatus;
-	}
 
 	public Category getCategoryCode() {
 		return categoryCode;
 	}
 
+
 	public void setCategoryCode(Category categoryCode) {
 		this.categoryCode = categoryCode;
 	}
 
-	@Override
-	public String toString() {
-		return "MenuAndCategory [menuCode=" + menuCode + ", menuName=" + menuName + ", menuPrice=" + menuPrice
-				+ ", orderableStatus=" + orderableStatus + ", categoryCode=" + categoryCode + "]";
+
+	public String getMenuName() {
+		return menuName;
 	}
 
+
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+
+
+	public int getMenuPrice() {
+		return menuPrice;
+	}
+
+
+	public void setMenuPrice(int menuPrice) {
+		this.menuPrice = menuPrice;
+	}
+
+
+	public String getOrderableStatus() {
+		return orderableStatus;
+	}
+
+
+	public void setOrderableStatus(String orderableStatus) {
+		this.orderableStatus = orderableStatus;
+	}
+
+
+	public String getOriginUrl() {
+		return originUrl;
+	}
+
+
+	public void setOriginUrl(String originUrl) {
+		this.originUrl = originUrl;
+	}
+
+
+	public String getPictureUrl() {
+		return pictureUrl;
+	}
+
+
+	public void setPictureUrl(String pictureUrl) {
+		this.pictureUrl = pictureUrl;
+	}
+
+
+	@Override
+	public String toString() {
+		return "MenuAndCategory [menuCode=" + menuCode + ", categoryCode=" + categoryCode + ", menuName=" + menuName
+				+ ", menuPrice=" + menuPrice + ", orderableStatus=" + orderableStatus + ", originUrl=" + originUrl
+				+ ", pictureUrl=" + pictureUrl + "]";
+	}
 
 	
 }
