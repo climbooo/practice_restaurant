@@ -24,6 +24,7 @@ import com.bbok.restaurant.common.paging.SelectCriteria;
 import com.bbok.restaurant.menu.dto.MenuAndCategoryDTO;
 import com.bbok.restaurant.menu.dto.MenuDTO;
 import com.bbok.restaurant.menu.service.MenuService;
+import com.bbok.restaurant.util.FileUploadUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -57,7 +58,7 @@ public class MenuController {
 		mv.addObject("menu", menu);
 		mv.setViewName("/menu/one");
 		
-		System.out.println("mv에 담긴 값:" + mv);
+		System.out.println("상세 페이지 mv에 담긴 값:" + mv);
 		return mv;
 	}
 	
@@ -161,13 +162,16 @@ public class MenuController {
 		String ext = originFileName.substring(originFileName.lastIndexOf("."));
 		String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
 		
-		try {
-			menuImg.transferTo(new File(filePath + "/" + saveName));
-		} catch (IllegalStateException | IOException e){
-			e.printStackTrace();
+		if(menuImg != null) {
 			
-			new File(filePath + "/" + saveName).delete();
-			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
+			try {
+				menuImg.transferTo(new File(filePath + "/" + saveName));
+			} catch (IllegalStateException | IOException e){
+				e.printStackTrace();
+				
+				new File(filePath + "/" + saveName).delete();
+				rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
+			}
 		}
 		
 		newMenu.setOriginUrl(originFileName);
@@ -188,13 +192,15 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
-		String newUrl = menu.getPictureUrl();
-		String pictureUrl = "/menuImages/" + newUrl;
-		
-		menu.setPictureUrl(pictureUrl);
+//		String newUrl = menu.getPictureUrl();
+//		String pictureUrl = "/menuImages/" + newUrl;
+//		
+//		menu.setPictureUrl(pictureUrl);
 		
 		mv.addObject("menu", menu);
 		mv.setViewName("/menu/modify");
+		
+		System.out.println("수정페이지 mv에 닮긴 값: " + mv);
 		
 		return mv;
 	}
@@ -203,33 +209,66 @@ public class MenuController {
 	@PostMapping("/modify")
 	public String modifyMenu(@RequestParam MultipartFile menuImg, RedirectAttributes rttr, @ModelAttribute MenuDTO modifyMenu) {
 		
+		String oriName = null;
+		String oriImage = null;
+		
+			
+		MenuAndCategoryDTO menu = menuService.findMenuByCode(modifyMenu.getMenuCode());
+		System.out.println("menu 값: " + menu);
+		
+		oriName = menu.getOriginUrl();
+		oriImage = menu.getPictureUrl();
+		System.out.println("oriName 값: " + oriName);
+		System.out.println("oriImage 값: " + oriImage);
+		
 		/* 파일 저장 */
 		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
+		
 		System.out.println("넘어온 menuImg: " + menuImg);
+		
 		/* uploadFile 폴더 생성 */
 		File mkdir = new File(filePath);
 		if(!mkdir.exists()) {
 			mkdir.mkdirs();
 		}
 		
-		/* 파일명 변경 */
-		String originFileName = menuImg.getOriginalFilename();
-		String ext = originFileName.substring(originFileName.lastIndexOf("."));
-		String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
-		
-		try {
-			menuImg.transferTo(new File(filePath + "/" + saveName));
-		} catch (IllegalStateException | IOException e){
-			e.printStackTrace();
+		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
 			
-			new File(filePath + "/" + saveName).delete();
+			/* 파일명 변경 */
+			String originFileName = menuImg.getOriginalFilename();
+			String ext = originFileName.substring(originFileName.lastIndexOf("."));
+			String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+			
+			System.out.println("넘어 온 originFilename: " + originFileName);
+			
+			try {
+				menuImg.transferTo(new File(filePath + "/" + saveName));
+			
+				if(oriImage != null) {
+					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriImage);
+				}
+			} catch (IOException e){
+				e.printStackTrace();
+				new File(filePath + "/" + saveName).delete();
+//				throw new RuntimeException(e);
+				
 			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
 		}
+			
+			modifyMenu.setOriginUrl(originFileName);
+			modifyMenu.setPictureUrl(saveName);
 		
-		modifyMenu.setOriginUrl(originFileName);
-		modifyMenu.setPictureUrl(saveName);
+			System.out.println("이미지 바뀐 modifyMenu 값: " + modifyMenu);
 		
-		menuService.modifyMenu(modifyMenu);
+		} else if(menuImg != null && menuImg.getOriginalFilename() == oriName){
+			
+			modifyMenu.setOriginUrl(oriName);
+			modifyMenu.setPictureUrl(oriImage);
+			
+			System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
+		}
+			
+		menuService.modifyMenu(modifyMenu, menuImg);
 		
 		rttr.addFlashAttribute("modifySuccessMessage", "메뉴 수정 완료");
 		

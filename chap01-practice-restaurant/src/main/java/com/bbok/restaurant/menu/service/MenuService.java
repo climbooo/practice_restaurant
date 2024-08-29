@@ -23,6 +23,7 @@ import com.bbok.restaurant.menu.entity.MenuAndCategory;
 import com.bbok.restaurant.menu.repository.CategoryRepository;
 import com.bbok.restaurant.menu.repository.MenuAndCategoryRepository;
 import com.bbok.restaurant.menu.repository.MenuRepository;
+import com.bbok.restaurant.util.FileUploadUtils;
 
 @Service
 public class MenuService {
@@ -89,16 +90,18 @@ public class MenuService {
 	}
 
 	@Transactional
-	public void modifyMenu(MenuDTO modifyMenu) {
+	public void modifyMenu(MenuDTO modifyMenu, MultipartFile menuImg) {
 		
 		Menu foundMenu = menuRepository.findById(modifyMenu.getMenuCode()).get();
-		foundMenu.setMenuName(modifyMenu.getMenuName());
-		foundMenu.setMenuPrice(modifyMenu.getMenuPrice());
-		foundMenu.setOrderableStatus(modifyMenu.getOrderableStatus());
-		foundMenu.setCategoryCode(modifyMenu.getCategoryCode());
-		foundMenu.setOriginUrl(modifyMenu.getOriginUrl());
-		foundMenu.setPictureUrl(modifyMenu.getPictureUrl());
 		
+			foundMenu.setMenuName(modifyMenu.getMenuName());
+			foundMenu.setMenuPrice(modifyMenu.getMenuPrice());
+			foundMenu.setOrderableStatus(modifyMenu.getOrderableStatus());
+			foundMenu.setCategoryCode(modifyMenu.getCategoryCode());
+			foundMenu.setOriginUrl(modifyMenu.getOriginUrl());
+			foundMenu.setPictureUrl(modifyMenu.getPictureUrl());
+			
+		System.out.println("foundMenu: " + foundMenu);
 	}
 
 	public CategoryDTO findCategoryByCode(int categoryCode) {
