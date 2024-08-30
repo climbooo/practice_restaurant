@@ -192,12 +192,15 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
-//		String newUrl = menu.getPictureUrl();
-//		String pictureUrl = "/menuImages/" + newUrl;
-//		
-//		menu.setPictureUrl(pictureUrl);
+		String path = "/menuImages/";
+		String oriImage = menu.getOriginUrl();
+		String image = menu.getPictureUrl();
+		String imageUrl = path + image;
+		
+		menu.setPictureUrl(imageUrl);
 		
 		mv.addObject("menu", menu);
+		mv.addObject("image", oriImage);
 		mv.setViewName("/menu/modify");
 		
 		System.out.println("수정페이지 mv에 닮긴 값: " + mv);
@@ -209,17 +212,14 @@ public class MenuController {
 	@PostMapping("/modify")
 	public String modifyMenu(@RequestParam MultipartFile menuImg, RedirectAttributes rttr, @ModelAttribute MenuDTO modifyMenu) {
 		
-		String oriName = null;
-		String oriImage = null;
-		
-			
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(modifyMenu.getMenuCode());
 		System.out.println("menu 값: " + menu);
 		
-		oriName = menu.getOriginUrl();
-		oriImage = menu.getPictureUrl();
+		String oriName = menu.getOriginUrl();
+		String oriUrl = menu.getPictureUrl();
+		
 		System.out.println("oriName 값: " + oriName);
-		System.out.println("oriImage 값: " + oriImage);
+		System.out.println("oriImage 값: " + oriUrl);
 		
 		/* 파일 저장 */
 		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
@@ -232,8 +232,10 @@ public class MenuController {
 			mkdir.mkdirs();
 		}
 		
-		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
-			
+//		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
+		
+		if(menuImg != null) {
+		
 			/* 파일명 변경 */
 			String originFileName = menuImg.getOriginalFilename();
 			String ext = originFileName.substring(originFileName.lastIndexOf("."));
@@ -244,8 +246,8 @@ public class MenuController {
 			try {
 				menuImg.transferTo(new File(filePath + "/" + saveName));
 			
-				if(oriImage != null) {
-					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriImage);
+				if(oriUrl != null) {
+					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriUrl);
 				}
 			} catch (IOException e){
 				e.printStackTrace();
@@ -260,10 +262,9 @@ public class MenuController {
 		
 			System.out.println("이미지 바뀐 modifyMenu 값: " + modifyMenu);
 		
-		} else if(menuImg != null && menuImg.getOriginalFilename() == oriName){
+		} else {
 			
-			modifyMenu.setOriginUrl(oriName);
-			modifyMenu.setPictureUrl(oriImage);
+			modifyMenu.setPictureUrl(oriUrl);
 			
 			System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
 		}

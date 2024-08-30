@@ -3,6 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+	function setThumbnail(input) {
+	    
+	    if (input.files && input.files[0]) {
+	    	var reader = new FileReader();
+	    	
+	    	reader.onload = function(e) {
+	        var $img = document.querySelector("#img");
+	        $img.setAttribute("src", event.target.result);
+	        $img.setAttribute("style", "max-width:250px; max-height:250px;");
+	    };
+	    reader.readAsDataURL(event.target.files[0]);
+		}
+	}      
+</script>
 <title>Insert title here</title>
 </head>
 <body>
@@ -11,9 +26,15 @@
 	
 	<h3 align="center">수정 할 메뉴 이름: <span th:text="${menu.menuName}"></span></h3>
 	
+	
 	<form action="/menu/modify" method="post" align="center" enctype="multipart/form-data">
-		<label>메뉴 사진 : </label><input type="file" name="menuImg" th:value="${menu.pictureUrl}"><br>
+	
+		<div align="center">
+			<img th:src="${menu.pictureUrl}" style="width: 250px;" id="img">
+		</div>
+		
 		<input type="hidden" name="menuCode" th:value="${menu.menuCode}">
+		<label>메뉴 사진 : </label><input type="file" name="menuImg" accept="image/*" onchange="setThumbnail(this)"><br>
 		<label>메뉴 이름 : </label><input type="text" name="menuName" th:value="${menu.menuName}"><br>
 		<label>메뉴 가격 : </label><input type="number" name="menuPrice" th:value="${menu.menuPrice}"><br>
 		<label>카테고리 : </label>
