@@ -9,7 +9,6 @@ public class CategoryDTO {
 	}
 
 	public CategoryDTO(int categoryCode, String categoryName) {
-		super();
 		this.categoryCode = categoryCode;
 		this.categoryName = categoryName;
 	}

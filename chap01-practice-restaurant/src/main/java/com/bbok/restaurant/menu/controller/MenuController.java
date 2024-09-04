@@ -45,7 +45,6 @@ public class MenuController {
 	}
 	
 	@GetMapping("/{menuCode}")
-	@ResponseBody
 	public ModelAndView findMenuByCode(ModelAndView mv, @PathVariable int menuCode) {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
@@ -212,15 +211,6 @@ public class MenuController {
 	@PostMapping("/modify")
 	public String modifyMenu(@RequestParam MultipartFile menuImg, RedirectAttributes rttr, @ModelAttribute MenuDTO modifyMenu) {
 		
-		MenuAndCategoryDTO menu = menuService.findMenuByCode(modifyMenu.getMenuCode());
-		System.out.println("menu 값: " + menu);
-		
-		String oriName = menu.getOriginUrl();
-		String oriUrl = menu.getPictureUrl();
-		
-		System.out.println("oriName 값: " + oriName);
-		System.out.println("oriImage 값: " + oriUrl);
-		
 		/* 파일 저장 */
 		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
 		
@@ -232,42 +222,58 @@ public class MenuController {
 			mkdir.mkdirs();
 		}
 		
-//		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
+		String saveName = null;
 		
-		if(menuImg != null) {
+		try {
 		
-			/* 파일명 변경 */
-			String originFileName = menuImg.getOriginalFilename();
-			String ext = originFileName.substring(originFileName.lastIndexOf("."));
-			String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+			MenuAndCategoryDTO menu = menuService.findMenuByCode(modifyMenu.getMenuCode());
+			System.out.println("menu 값: " + menu);
 			
-			System.out.println("넘어 온 originFilename: " + originFileName);
+			String oriName = menu.getOriginUrl();
+			String oriUrl = menu.getPictureUrl();
 			
-			try {
-				menuImg.transferTo(new File(filePath + "/" + saveName));
+			System.out.println("oriName 값: " + oriName);
+			System.out.println("oriImage 값: " + oriUrl);
 			
-				if(oriUrl != null) {
+	//		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
+			
+			if(menuImg != null) {
+		
+				/* 파일명 변경 */
+				String originFileName = menuImg.getOriginalFilename();
+				String ext = originFileName.substring(originFileName.lastIndexOf("."));
+//				String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+				String randomName = UUID.randomUUID().toString().replace("-", "");
+				saveName = randomName + ext;
+				
+				System.out.println("넘어 온 originFilename: " + originFileName);
+				
+				
+					menuImg.transferTo(new File(filePath + "/" + saveName));
+				
+					modifyMenu.setOriginUrl(originFileName);
+					modifyMenu.setPictureUrl(saveName);
+	
+					System.out.println("이미지 바뀐 modifyMenu 값: " + modifyMenu);
+					
 					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriUrl);
+				} else {
+					
+					modifyMenu.setPictureUrl(oriUrl);
 				}
+				
 			} catch (IOException e){
 				e.printStackTrace();
 				new File(filePath + "/" + saveName).delete();
-//				throw new RuntimeException(e);
-				
+					
 			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
-		}
-			
-			modifyMenu.setOriginUrl(originFileName);
-			modifyMenu.setPictureUrl(saveName);
-		
-			System.out.println("이미지 바뀐 modifyMenu 값: " + modifyMenu);
-		
-		} else {
-			
-			modifyMenu.setPictureUrl(oriUrl);
-			
-			System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
-		}
+			}
+//		} else {
+//			
+//			modifyMenu.setPictureUrl(oriUrl);
+//			
+//			System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
+//		}
 			
 		menuService.modifyMenu(modifyMenu, menuImg);
 		
@@ -300,7 +306,7 @@ public class MenuController {
 		return "redirect:/menu/admin";
 	}
 	
-	@GetMapping("/search")
+	@GetMapping("/list")
 	public ModelAndView searchPage(HttpServletRequest request, ModelAndView mv) {
 
 		String currentPage = request.getParameter("currentPage");
@@ -338,7 +344,7 @@ public class MenuController {
 
 		mv.addObject("menuList", menuList);
 		mv.addObject("selectCriteria", selectCriteria);
-		mv.setViewName("menu/search");
+		mv.setViewName("menu/list");
 
 		return mv;
 	}

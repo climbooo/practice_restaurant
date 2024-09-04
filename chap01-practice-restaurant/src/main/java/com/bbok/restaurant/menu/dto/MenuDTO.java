@@ -15,7 +15,6 @@ public class MenuDTO {
 
 	public MenuDTO(int menuCode, int categoryCode, String menuName, int menuPrice, String orderableStatus,
 			String originUrl, String pictureUrl) {
-		super();
 		this.menuCode = menuCode;
 		this.categoryCode = categoryCode;
 		this.menuName = menuName;

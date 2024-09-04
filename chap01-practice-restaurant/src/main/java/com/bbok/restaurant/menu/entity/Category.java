@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity(name="Category")
+@Entity(name = "Category")
 @Table(name = "CATEGORY")
 public class Category {
 
@@ -20,7 +20,6 @@ public class Category {
 	}
 
 	public Category(int categoryCode, String categoryName) {
-		super();
 		this.categoryCode = categoryCode;
 		this.categoryName = categoryName;
 	}
