@@ -171,10 +171,10 @@ public class MenuController {
 				new File(filePath + "/" + saveName).delete();
 				rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
 			}
-		}
 		
-		newMenu.setOriginUrl(originFileName);
-		newMenu.setPictureUrl(saveName);
+			newMenu.setOriginUrl(originFileName);
+			newMenu.setPictureUrl(saveName);
+		} 
 		
 		System.out.println("등록 할 newMenu" + newMenu);
 		menuService.registNewMenu(newMenu);
@@ -191,13 +191,17 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
+		String noMenuUrl = "/menuImages/noimage.png";
 		String path = "/menuImages/";
 		String oriImage = menu.getOriginUrl();
 		String image = menu.getPictureUrl();
 		String imageUrl = path + image;
 		
-		menu.setPictureUrl(imageUrl);
-		
+		if(image != null) {
+			menu.setPictureUrl(imageUrl);
+		} else {
+			menu.setPictureUrl(noMenuUrl);
+		}
 		mv.addObject("menu", menu);
 		mv.addObject("image", oriImage);
 		mv.setViewName("/menu/modify");
@@ -223,6 +227,7 @@ public class MenuController {
 		}
 		
 		String saveName = null;
+		String noMenuUrl = "noimage.png";
 		
 		try {
 		
@@ -234,6 +239,7 @@ public class MenuController {
 			
 			System.out.println("oriName 값: " + oriName);
 			System.out.println("oriImage 값: " + oriUrl);
+				
 			
 	//		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
 			
@@ -248,7 +254,6 @@ public class MenuController {
 				
 				System.out.println("넘어 온 originFilename: " + originFileName);
 				
-				
 					menuImg.transferTo(new File(filePath + "/" + saveName));
 				
 					modifyMenu.setOriginUrl(originFileName);
@@ -258,8 +263,13 @@ public class MenuController {
 					
 					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriUrl);
 				} else {
-					
-					modifyMenu.setPictureUrl(oriUrl);
+					if(oriUrl != null) {
+						modifyMenu.setOriginUrl(oriName);
+						modifyMenu.setPictureUrl(oriUrl);
+					} else {
+						modifyMenu.setOriginUrl(noMenuUrl);
+						modifyMenu.setPictureUrl(noMenuUrl);
+					}
 				}
 				
 			} catch (IOException e){
@@ -307,7 +317,7 @@ public class MenuController {
 	}
 	
 	@GetMapping("/list")
-	public ModelAndView searchPage(HttpServletRequest request, ModelAndView mv) {
+	public ModelAndView listPage(HttpServletRequest request, ModelAndView mv) {
 
 		String currentPage = request.getParameter("currentPage");
 		int pageNo = 1;
@@ -339,13 +349,13 @@ public class MenuController {
 		List<MenuAndCategoryDTO> menuList = menuService.searchMenuList(selectCriteria);
 
 		for(MenuAndCategoryDTO menu : menuList) {
-			System.out.println(menu);
+			System.out.println("menu안에 든 값" + menu);
 		}
 
 		mv.addObject("menuList", menuList);
 		mv.addObject("selectCriteria", selectCriteria);
 		mv.setViewName("menu/list");
-
+		System.out.println("menuList에 든 값" + menuList);
 		return mv;
 	}
 }

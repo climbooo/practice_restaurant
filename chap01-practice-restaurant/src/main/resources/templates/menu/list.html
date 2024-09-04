@@ -1,13 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymleaf.org"><!-- 타임리프 활용하기(네임스키마 문법 추가) -->
 <head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <meta charset="UTF-8">	
 <title>Insert title here</title>
+<style>
+#img-Div {
+	display: inline-block;
+}
+
+.span {
+	display: block;
+	font-family: "Jua", sans-serif;
+    font-weight: 450;
+    font-style: normal;
+    color: brown;
+    margin-top: 5px;
+    margin-left: 60px;
+}
+
+#img-size {
+	width: 250px;
+	height: 250px;
+	margin: 15px 60px;
+}
+
+</style>
 </head>
 <body>
 	<div th:replace="common/header.html"></div>
-	<h3 align="center" style="color:red">Menu List</h3>
-	<table align="center" border="1">
+	<h3 align="center" style="color: brown">Menu List</h3>
+	<!-- <table align="center" border="1">
 		<tr>
 			<th>메뉴번호</th>
 			<th>카테고리이름</th>
@@ -22,7 +47,37 @@
 			<td th:text="${ menu.menuPrice }"></td>
 			<td th:text="${ menu.orderableStatus }"></td>
 		</tr>
-	</table>
+	</table> -->
+	<div th:each="menu : ${ menuList }" id="img-Div">
+	
+	<!-- 메뉴 사진 있는 경우 -->
+	<th:block th:if="${ menu.pictureUrl != null }">
+		<img th:src="@{/menuImages/{pictureUrl}(pictureUrl=${menu.pictureUrl})}" id="img-size">
+		<span th:text="${ menu.menuName }" class="span"></span>
+		<span th:text="${ menu.menuPrice } + '원'" class="span"></span>
+		<span th:if="${ menu.orderableStatus == 'Y'}" class="span">
+			<a>판매중</a>
+		</span>
+		<span th:if="${ menu.orderableStatus == 'N'}" class="span">
+			<a>구매불가</a>
+		</span>
+	</th:block>
+	
+	<!-- 메뉴 사진 없는 경우 -->
+	<th:block th:if="${ menu.pictureUrl == null }">
+		<img src="/menuImages/noimage.png" id="img-size">
+		<span th:text="${ menu.menuName }" class="span"></span>
+		<span th:text="${ menu.menuPrice } + '원'" class="span"></span>
+		<span th:if="${ menu.orderableStatus == 'Y'}" class="span">
+			<a>판매중</a>
+		</span>
+		<span th:if="${ menu.orderableStatus == 'N'}" class="span">
+			<a>구매불가</a>
+		</span>
+		<input type="number">
+	</th:block>
+	</div>
+	<br>
 	<br>
     <div th:replace="menu/paging.html"></div>
 	<!-- 검색 폼 -->

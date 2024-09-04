@@ -6,6 +6,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.bbok.restaurant.menu.service.MenuService;
 
@@ -27,15 +28,18 @@ public class MainController {
         System.out.println(resource.getURI().getPath()); //URL 객체
         return "main/main";
     }
-//	private final MenuService menuService;
-//	
-//	
-//	@Autowired
-//    public MainController(MenuService menuService) {
-//    	this.menuService = menuService;
-//	}
+	private final MenuService menuService;
+	
+	
+	@Autowired
+    public MainController(MenuService menuService) {
+    	this.menuService = menuService;
+	}
 
 //	@GetMapping(value= {"/", "/main"})
+//	public ModelAndView mainList(ModelAndView mv) {
+//		
+//	}
 
 	@PostMapping(value="/")
     public String redirectMain() {

@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -32,7 +33,8 @@ public class CartAndMenu {
 	@Column(name = "CART_CODE")
 	private int cartCode;
 	
-	@Column(name = "MENU_CODE")
+	@ManyToOne
+	@JoinColumn(name = "MENU_CODE")
 	private Menu menuCode;
 	
 	@Column(name = "CREATE_DATE")
