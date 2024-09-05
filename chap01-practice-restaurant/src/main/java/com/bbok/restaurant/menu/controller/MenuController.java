@@ -145,26 +145,45 @@ public class MenuController {
 	
 	/* 메뉴 등록 요청 */
 	@PostMapping("/regist")
-	public String registMenu(@RequestParam MultipartFile menuImg, @ModelAttribute MenuDTO newMenu, RedirectAttributes rttr)throws UnsupportedEncodingException {
-//		(value = "file", required = false)
+	public String registMenu(@RequestParam MultipartFile menuImg, @ModelAttribute MenuDTO newMenu, RedirectAttributes rttr) {
+		
 		/* 파일 저장 */
 		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
 		System.out.println("넘어온 menuImg: " + menuImg);
+		
 		/* uploadFile 폴더 생성 */
 		File mkdir = new File(filePath);
 		if(!mkdir.exists()) {
 			mkdir.mkdirs();
 		}
 		
-		/* 파일명 변경 */
-		String originFileName = menuImg.getOriginalFilename();
-		String ext = originFileName.substring(originFileName.lastIndexOf("."));
-		String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+		String noMenuUrl = "noimage.png";
+		String saveName = null;
 		
-		if(menuImg != null) {
+		try {
+			/* 파일명 변경 */
+			if(menuImg.isEmpty() != true) {
+				
+				String originFileName = menuImg.getOriginalFilename();
+				String ext = originFileName.substring(originFileName.lastIndexOf("."));
+	//			String saveName = UUID.randomUUID().toString().replace("-", "") + ext;
+				String randomName = UUID.randomUUID().toString().replace("-", "");
+				saveName = randomName + ext;
 			
-			try {
 				menuImg.transferTo(new File(filePath + "/" + saveName));
+				
+				newMenu.setOriginUrl(originFileName);
+				newMenu.setPictureUrl(saveName);
+				
+				System.out.println("이미지 넣어서 등록: " + newMenu);
+				
+			} else {
+				newMenu.setOriginUrl(noMenuUrl);
+				newMenu.setPictureUrl(noMenuUrl);
+				
+				System.out.println("이미지 없이 등록: " + newMenu);
+			}
+				
 			} catch (IllegalStateException | IOException e){
 				e.printStackTrace();
 				
@@ -172,9 +191,6 @@ public class MenuController {
 				rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
 			}
 		
-			newMenu.setOriginUrl(originFileName);
-			newMenu.setPictureUrl(saveName);
-		} 
 		
 		System.out.println("등록 할 newMenu" + newMenu);
 		menuService.registNewMenu(newMenu);
@@ -218,7 +234,7 @@ public class MenuController {
 		/* 파일 저장 */
 		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
 		
-		System.out.println("넘어온 menuImg: " + menuImg);
+		System.out.println("넘어온 menuImg 있나?: " + menuImg);
 		
 		/* uploadFile 폴더 생성 */
 		File mkdir = new File(filePath);
@@ -243,7 +259,9 @@ public class MenuController {
 			
 	//		if(menuImg != null && menuImg.getOriginalFilename() != oriName) {
 			
-			if(menuImg != null) {
+//			if(menuImg != null) {
+			
+			if(menuImg.isEmpty() != true) {
 		
 				/* 파일명 변경 */
 				String originFileName = menuImg.getOriginalFilename();
@@ -261,14 +279,19 @@ public class MenuController {
 	
 					System.out.println("이미지 바뀐 modifyMenu 값: " + modifyMenu);
 					
-					boolean isDelete = FileUploadUtils.deleteFile(filePath, oriUrl);
+					if(oriUrl != null) {
+						boolean isDelete = FileUploadUtils.deleteFile(filePath, oriUrl);
+					}
 				} else {
+					
 					if(oriUrl != null) {
 						modifyMenu.setOriginUrl(oriName);
 						modifyMenu.setPictureUrl(oriUrl);
+						System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
 					} else {
 						modifyMenu.setOriginUrl(noMenuUrl);
 						modifyMenu.setPictureUrl(noMenuUrl);
+						System.out.println("이미지 없는 modifyMenu 값: " + modifyMenu);
 					}
 				}
 				
@@ -278,12 +301,6 @@ public class MenuController {
 					
 			rttr.addAttribute("fileUploadFailMessage", "파일 업로드 실패");
 			}
-//		} else {
-//			
-//			modifyMenu.setPictureUrl(oriUrl);
-//			
-//			System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
-//		}
 			
 		menuService.modifyMenu(modifyMenu, menuImg);
 		
