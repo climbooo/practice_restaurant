@@ -7,8 +7,11 @@
 <body>
 	<div th:replace="common/header.html"></div>
 	<br>
-	<div align="center">
+	<div align="center" th:if="${ menu.pictureUrl != null }">
 		<img th:src="${ menu.pictureUrl }" style="width: 250px">
+	</div>
+	<div align="center" th:if="${ menu.pictureUrl == null }">
+		<img src="/menuImages/noimage.png" style="width: 250px">
 	</div>
 	<br>
 	<table align="center" border="1">

@@ -49,10 +49,12 @@ public class MenuController {
 		
 		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
 		
-		String newUrl = menu.getPictureUrl();
-		String pictureUrl = "/menuImages/" + newUrl;
+		String imgUrl = menu.getPictureUrl();
+		String pictureUrl = "/menuImages/" + imgUrl;
 		
+		if(imgUrl != null) {
 		menu.setPictureUrl(pictureUrl);
+		}
 		
 		mv.addObject("menu", menu);
 		mv.setViewName("/menu/one");
@@ -178,8 +180,8 @@ public class MenuController {
 				System.out.println("이미지 넣어서 등록: " + newMenu);
 				
 			} else {
-				newMenu.setOriginUrl(noMenuUrl);
-				newMenu.setPictureUrl(noMenuUrl);
+				newMenu.setOriginUrl(null);
+				newMenu.setPictureUrl(null);
 				
 				System.out.println("이미지 없이 등록: " + newMenu);
 			}
@@ -324,6 +326,15 @@ public class MenuController {
 	/* 메뉴 삭제 요청 */
 	@PostMapping("/delete/{menuCode}")
 	public String deleteMenu(RedirectAttributes rttr, @PathVariable int menuCode) {
+		
+		MenuAndCategoryDTO menu = menuService.findMenuByCode(menuCode);
+		
+		String filePath = "C:\\restaurant2\\chap01-practice-restaurant\\src\\main\\resources\\static\\menuImages";
+		String imgUrl = menu.getPictureUrl();
+		
+		if(imgUrl != null) {
+		boolean isDelete = FileUploadUtils.deleteFile(filePath, imgUrl);
+		}
 		
 		menuService.deleteMenu(menuCode);
 		
