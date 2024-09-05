@@ -291,8 +291,8 @@ public class MenuController {
 						modifyMenu.setPictureUrl(oriUrl);
 						System.out.println("이미지 그대로인 modifyMenu 값: " + modifyMenu);
 					} else {
-						modifyMenu.setOriginUrl(noMenuUrl);
-						modifyMenu.setPictureUrl(noMenuUrl);
+						modifyMenu.setOriginUrl(null);
+						modifyMenu.setPictureUrl(null);
 						System.out.println("이미지 없는 modifyMenu 값: " + modifyMenu);
 					}
 				}
